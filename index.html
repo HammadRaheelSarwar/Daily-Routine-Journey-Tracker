@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>JourneyTrack - Daily Routine & Journey Tracker</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Loading Screen -->
+  <div id="loading-screen" class="loading-screen">
+    <div class="loading-content">
+      <div class="logo">
+        <i class="fas fa-route"></i>
+        <span>JourneyTrack</span>
+      </div>
+      <div class="loading-spinner"></div>
+    </div>
+  </div>
+
+  <!-- Main App -->
+  <div id="app" class="app-container">
+    <header class="app-header">
+      <div class="header-content">
+        <div class="logo">
+          <i class="fas fa-route"></i>
+          <span>JourneyTrack</span>
+        </div>
+        <nav class="nav">
+          <button class="nav__btn is-active" data-target="dashboard">
+            <i class="fas fa-chart-pie"></i>
+            <span>Dashboard</span>
+          </button>
+          <button class="nav__btn" data-target="log-journey">
+            <i class="fas fa-plus-circle"></i>
+            <span>Log Journey</span>
+          </button>
+          <button class="nav__btn" data-target="routine">
+            <i class="fas fa-tasks"></i>
+            <span>Routine</span>
+          </button>
+          <button class="nav__btn" data-target="history">
+            <i class="fas fa-history"></i>
+            <span>History</span>
+          </button>
+          <button class="nav__btn" data-target="settings">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+          </button>
+        </nav>
+        <div class="user-menu">
+          <button id="theme-toggle" class="theme-toggle">
+            <i class="fas fa-moon"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <section id="dashboard" class="view is-active">
+        <div class="view-header">
+          <h1>Dashboard</h1>
+          <p>Your daily activity overview</p>
+        </div>
+        
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-route"></i>
+            </div>
+            <div class="stat-content">
+              <div class="stat-value" id="stat-journeys-today">0</div>
+              <div class="stat-label">Journeys Today</div>
+            </div>
+            <div class="stat-trend positive">
+              <i class="fas fa-arrow-up"></i>
+              <span>12%</span>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-road"></i>
+            </div>
+            <div class="stat-content">
+              <div class="stat-value" id="stat-distance-today">0 <small>km</small></div>
+              <div class="stat-label">Total Distance</div>
+            </div>
+            <div class="stat-trend positive">
+              <i class="fas fa-arrow-up"></i>
+              <span>8%</span>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-content">
+              <div class="stat-value" id="stat-time-today">0 <small>min</small></div>
+              <div class="stat-label">Time Spent</div>
+            </div>
+            <div class="stat-trend negative">
+              <i class="fas fa-arrow-down"></i>
+              <span>5%</span>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-leaf"></i>
+            </div>
+            <div class="stat-content">
+              <div class="stat-value" id="stat-co2-saved">0 <small>kg</small></div>
+              <div class="stat-label">CO₂ Saved</div>
+            </div>
+            <div class="stat-trend positive">
+              <i class="fas fa-arrow-up"></i>
+              <span>15%</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="content-grid">
+          <div class="content-panel">
+            <div class="panel-header">
+              <h2>Today's Routine</h2>
+              <div class="completion-rate">
+                <span id="routine-completion">0%</span>
+                <span>Completed</span>
+              </div>
+            </div>
+            <div class="panel-body">
+              <ul id="today-routine" class="routine-list"></ul>
+            </div>
+          </div>
+          
+          <div class="content-panel">
+            <div class="panel-header">
+              <h2>Recent Journeys</h2>
+              <a href="#" class="view-all">View All</a>
+            </div>
+            <div class="panel-body">
+              <div class="table-container">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>From</th>
+                      <th>To</th>
+                      <th>Mode</th>
+                      <th>Distance</th>
+                      <th>Time</th>
+                    </tr>
+                  </thead>
+                  <tbody id="recent-journeys"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          
+          <div class="content-panel">
+            <div class="panel-header">
+              <h2>Weekly Activity</h2>
+              <div class="time-filter">
+                <select id="activity-period">
+                  <option value="week">This Week</option>
+                  <option value="month">This Month</option>
+                </select>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="chart-placeholder">
+                <div class="chart-bars">
+                  <div class="bar" style="height: 70%"><span>Mon</span></div>
+                  <div class="bar" style="height: 85%"><span>Tue</span></div>
+                  <div class="bar" style="height: 60%"><span>Wed</span></div>
+                  <div class="bar" style="height: 90%"><span>Thu</span></div>
+                  <div class="bar" style="height: 75%"><span>Fri</span></div>
+                  <div class="bar" style="height: 50%"><span>Sat</span></div>
+                  <div class="bar" style="height: 40%"><span>Sun</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="content-panel">
+            <div class="panel-header">
+              <h2>Transport Distribution</h2>
+            </div>
+            <div class="panel-body">
+              <div class="chart-placeholder pie-chart">
+                <div class="pie-segment" style="--percentage: 40; --color: var(--primary);"></div>
+                <div class="pie-segment" style="--percentage: 25; --color: var(--success);"></div>
+                <div class="pie-segment" style="--percentage: 20; --color: var(--warning);"></div>
+                <div class="pie-segment" style="--percentage: 15; --color: var(--secondary);"></div>
+                <div class="chart-legend">
+                  <div class="legend-item">
+                    <span class="legend-color" style="background-color: var(--primary);"></span>
+                    <span>Walking</span>
+                  </div>
+                  <div class="legend-item">
+                    <span class="legend-color" style="background-color: var(--success);"></span>
+                    <span>Cycling</span>
+                  </div>
+                  <div class="legend-item">
+                    <span class="legend-color" style="background-color: var(--warning);"></span>
+                    <span>Public Transport</span>
+                  </div>
+                  <div class="legend-item">
+                    <span class="legend-color" style="background-color: var(--secondary);"></span>
+                    <span>Car</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="log-journey" class="view">
+        <div class="view-header">
+          <h1>Log a Journey</h1>
+          <p>Record your travel details</p>
+        </div>
+        
+        <div class="form-container">
+          <form id="journey-form" class="modern-form">
+            <div class="form-section">
+              <h3>Journey Details</h3>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="journey-date">Date</label>
+                  <div class="input-with-icon">
+                    <i class="fas fa-calendar"></i>
+                    <input type="date" id="journey-date" required />
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label for="journey-mode">Transport Mode</label>
+                  <div class="input-with-icon">
+                    <i class="fas fa-bus"></i>
+                    <select id="journey-mode" required>
+                      <option value="Walk">Walk</option>
+                      <option value="Cycle">Cycle</option>
+                      <option value="Car">Car</option>
+                      <option value="Bus">Bus</option>
+                      <option value="Train">Train</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="form-section">
+              <h3>Route Information</h3>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="journey-from">From</label>
+                  <div class="input-with-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <input type="text" id="journey-from" placeholder="Start location" required />
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label for="journey-to">To</label>
+                  <div class="input-with-icon">
+                    <i class="fas fa-flag-checkered"></i>
+                    <input type="text" id="journey-to" placeholder="Destination" required />
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="form-section">
+              <h3>Journey Metrics</h3>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="journey-distance">Distance (km)</label>
+                  <div class="input-with-icon">
+                    <i class="fas fa-ruler"></i>
+                    <input type="number" id="journey-distance" min="0" step="0.1" required />
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label for="journey-time">Time (min)</label>
+                  <div class="input-with-icon">
+                    <i class="fas fa-stopwatch"></i>
+                    <input type="number" id="journey-time" min="0" step="1" required />
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label for="journey-notes">Notes</label>
+                  <div class="input-with-icon">
+                    <i class="fas fa-sticky-note"></i>
+                    <input type="text" id="journey-notes" placeholder="Optional notes about your journey" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i>
+                Save Journey
+              </button>
+              <button type="reset" class="btn btn-secondary">
+                <i class="fas fa-undo"></i>
+                Reset Form
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section id="routine" class="view">
+        <div class="view-header">
+          <h1>Daily Routine</h1>
+          <p>Manage your daily activities</p>
+        </div>
+        
+        <div class="routine-container">
+          <div class="routine-stats">
+            <div class="routine-stat">
+              <span class="stat-number" id="total-routines">0</span>
+              <span class="stat-label">Total Items</span>
+            </div>
+            <div class="routine-stat">
+              <span class="stat-number" id="completed-today">0</span>
+              <span class="stat-label">Completed Today</span>
+            </div>
+            <div class="routine-stat">
+              <span class="stat-number" id="completion-rate">0%</span>
+              <span class="stat-label">Completion Rate</span>
+            </div>
+          </div>
+          
+          <form id="routine-form" class="inline-form">
+            <div class="input-with-button">
+              <input type="text" id="routine-title" placeholder="Add a new routine item..." required />
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-plus"></i>
+                Add
+              </button>
+            </div>
+          </form>
+          
+          <div class="routine-list-container">
+            <ul id="routine-list" class="routine-items"></ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="history" class="view">
+        <div class="view-header">
+          <h1>Journey History</h1>
+          <p>Review your past journeys</p>
+        </div>
+        
+        <div class="history-container">
+          <div class="filters-panel">
+            <h3>Filters</h3>
+            <form id="filter-form" class="filter-form">
+              <div class="filter-grid">
+                <div class="filter-group">
+                  <label for="filter-from">From Date</label>
+                  <input type="date" id="filter-from" />
+                </div>
+                
+                <div class="filter-group">
+                  <label for="filter-to">To Date</label>
+                  <input type="date" id="filter-to" />
+                </div>
+                
+                <div class="filter-group">
+                  <label for="filter-mode">Transport Mode</label>
+                  <select id="filter-mode">
+                    <option value="">All Modes</option>
+                    <option value="Walk">Walk</option>
+                    <option value="Cycle">Cycle</option>
+                    <option value="Car">Car</option>
+                    <option value="Bus">Bus</option>
+                    <option value="Train">Train</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                
+                <div class="filter-group">
+                  <label>&nbsp;</label>
+                  <button type="button" id="clear-filters" class="btn btn-secondary">
+                    <i class="fas fa-times"></i>
+                    Clear Filters
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+          
+          <div class="history-content">
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Mode</th>
+                    <th>Distance (km)</th>
+                    <th>Time (min)</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="history-rows"></tbody>
+              </table>
+            </div>
+            
+            <div class="pagination">
+              <button class="pagination-btn" disabled>
+                <i class="fas fa-chevron-left"></i>
+              </button>
+              <span class="pagination-info">Page 1 of 1</span>
+              <button class="pagination-btn">
+                <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="settings" class="view">
+        <div class="view-header">
+          <h1>Settings</h1>
+          <p>Manage your application preferences</p>
+        </div>
+        
+        <div class="settings-container">
+          <div class="settings-panel">
+            <h3>Data Management</h3>
+            <div class="settings-options">
+              <div class="setting-item">
+                <div class="setting-info">
+                  <h4>Export Data</h4>
+                  <p>Download all your journey and routine data as a JSON file</p>
+                </div>
+                <button id="export-btn" class="btn btn-primary">
+                  <i class="fas fa-download"></i>
+                  Export Data
+                </button>
+              </div>
+              
+              <div class="setting-item">
+                <div class="setting-info">
+                  <h4>Import Data</h4>
+                  <p>Upload previously exported data to restore your information</p>
+                </div>
+                <label class="btn btn-secondary file-upload-btn">
+                  <i class="fas fa-upload"></i>
+                  Import Data
+                  <input id="import-input" type="file" accept="application/json" hidden />
+                </label>
+              </div>
+              
+              <div class="setting-item">
+                <div class="setting-info">
+                  <h4>Reset All Data</h4>
+                  <p>Permanently delete all your journey and routine data</p>
+                </div>
+                <button id="reset-btn" class="btn btn-danger">
+                  <i class="fas fa-trash"></i>
+                  Reset All Data
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="settings-panel">
+            <h3>Preferences</h3>
+            <div class="settings-options">
+              <div class="setting-item">
+                <div class="setting-info">
+                  <h4>Theme</h4>
+                  <p>Switch between light and dark mode</p>
+                </div>
+                <div class="theme-toggle-large">
+                  <span>Light</span>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="theme-switch" />
+                    <span class="slider"></span>
+                  </label>
+                  <span>Dark</span>
+                </div>
+              </div>
+              
+              <div class="setting-item">
+                <div class="setting-info">
+                  <h4>Measurement Units</h4>
+                  <p>Choose your preferred unit system</p>
+                </div>
+                <div class="radio-group">
+                  <label class="radio-option">
+                    <input type="radio" name="units" value="metric" checked />
+                    <span class="radio-checkmark"></span>
+                    Metric (km)
+                  </label>
+                  <label class="radio-option">
+                    <input type="radio" name="units" value="imperial" />
+                    <span class="radio-checkmark"></span>
+                    Imperial (miles)
+                  </label>
+                </div>
+              </div>
+              
+              <div class="setting-item">
+                <div class="setting-info">
+                  <h4>Notifications</h4>
+                  <p>Receive reminders for routine tasks</p>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="notifications-switch" checked />
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <div class="footer-content">
+        <div class="footer-info">
+          <div class="logo">
+            <i class="fas fa-route"></i>
+            <span>JourneyTrack</span>
+          </div>
+          <p>Track your journeys and routines with ease</p>
+        </div>
+        <div class="footer-links">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Support</a>
+        </div>
+      </div>
+      <div class="footer-copyright">
+        <small>Made for you · Your data is stored locally in your browser</small>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Toast Notifications -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
